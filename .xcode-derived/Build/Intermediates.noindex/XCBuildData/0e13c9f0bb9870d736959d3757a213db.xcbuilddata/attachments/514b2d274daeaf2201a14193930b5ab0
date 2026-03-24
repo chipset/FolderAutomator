@@ -1,0 +1,109 @@
+{
+  "" : {
+    "diagnostics" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/FolderAutomatorSettingsApp-primary.dia",
+    "emit-module-dependencies" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/FolderAutomatorSettingsApp-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/FolderAutomatorSettingsApp-primary-emit-module.dia",
+    "pch" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/FolderAutomatorSettingsApp-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/FolderAutomatorSettingsApp-primary.swiftdeps"
+  },
+  "/Users/thomas/test-vscode/Hazel-Replacement/Sources/FolderAutomatorCore/AppModel.swift" : {
+    "const-values" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/AppModel.swiftconstvalues",
+    "dependencies" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/AppModel.d",
+    "diagnostics" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/AppModel.dia",
+    "index-unit-output-path" : "/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/AppModel.o",
+    "llvm-bc" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/AppModel.bc",
+    "object" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/AppModel.o",
+    "swift-dependencies" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/AppModel.swiftdeps",
+    "swiftmodule" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/AppModel~partial.swiftmodule"
+  },
+  "/Users/thomas/test-vscode/Hazel-Replacement/Sources/FolderAutomatorCore/BookmarkManager.swift" : {
+    "const-values" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/BookmarkManager.swiftconstvalues",
+    "dependencies" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/BookmarkManager.d",
+    "diagnostics" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/BookmarkManager.dia",
+    "index-unit-output-path" : "/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/BookmarkManager.o",
+    "llvm-bc" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/BookmarkManager.bc",
+    "object" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/BookmarkManager.o",
+    "swift-dependencies" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/BookmarkManager.swiftdeps",
+    "swiftmodule" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/BookmarkManager~partial.swiftmodule"
+  },
+  "/Users/thomas/test-vscode/Hazel-Replacement/Sources/FolderAutomatorCore/ConfigurationStore.swift" : {
+    "const-values" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/ConfigurationStore.swiftconstvalues",
+    "dependencies" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/ConfigurationStore.d",
+    "diagnostics" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/ConfigurationStore.dia",
+    "index-unit-output-path" : "/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/ConfigurationStore.o",
+    "llvm-bc" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/ConfigurationStore.bc",
+    "object" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/ConfigurationStore.o",
+    "swift-dependencies" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/ConfigurationStore.swiftdeps",
+    "swiftmodule" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/ConfigurationStore~partial.swiftmodule"
+  },
+  "/Users/thomas/test-vscode/Hazel-Replacement/Sources/FolderAutomatorCore/FileRuleEngine.swift" : {
+    "const-values" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/FileRuleEngine.swiftconstvalues",
+    "dependencies" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/FileRuleEngine.d",
+    "diagnostics" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/FileRuleEngine.dia",
+    "index-unit-output-path" : "/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/FileRuleEngine.o",
+    "llvm-bc" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/FileRuleEngine.bc",
+    "object" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/FileRuleEngine.o",
+    "swift-dependencies" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/FileRuleEngine.swiftdeps",
+    "swiftmodule" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/FileRuleEngine~partial.swiftmodule"
+  },
+  "/Users/thomas/test-vscode/Hazel-Replacement/Sources/FolderAutomatorCore/FolderMonitor.swift" : {
+    "const-values" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/FolderMonitor.swiftconstvalues",
+    "dependencies" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/FolderMonitor.d",
+    "diagnostics" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/FolderMonitor.dia",
+    "index-unit-output-path" : "/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/FolderMonitor.o",
+    "llvm-bc" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/FolderMonitor.bc",
+    "object" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/FolderMonitor.o",
+    "swift-dependencies" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/FolderMonitor.swiftdeps",
+    "swiftmodule" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/FolderMonitor~partial.swiftmodule"
+  },
+  "/Users/thomas/test-vscode/Hazel-Replacement/Sources/FolderAutomatorCore/LoginItemManager.swift" : {
+    "const-values" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/LoginItemManager.swiftconstvalues",
+    "dependencies" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/LoginItemManager.d",
+    "diagnostics" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/LoginItemManager.dia",
+    "index-unit-output-path" : "/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/LoginItemManager.o",
+    "llvm-bc" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/LoginItemManager.bc",
+    "object" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/LoginItemManager.o",
+    "swift-dependencies" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/LoginItemManager.swiftdeps",
+    "swiftmodule" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/LoginItemManager~partial.swiftmodule"
+  },
+  "/Users/thomas/test-vscode/Hazel-Replacement/Sources/FolderAutomatorCore/Models.swift" : {
+    "const-values" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/Models.swiftconstvalues",
+    "dependencies" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/Models.d",
+    "diagnostics" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/Models.dia",
+    "index-unit-output-path" : "/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/Models.o",
+    "llvm-bc" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/Models.bc",
+    "object" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/Models.o",
+    "swift-dependencies" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/Models.swiftdeps",
+    "swiftmodule" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/Models~partial.swiftmodule"
+  },
+  "/Users/thomas/test-vscode/Hazel-Replacement/Sources/FolderAutomatorCore/PathPicker.swift" : {
+    "const-values" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/PathPicker.swiftconstvalues",
+    "dependencies" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/PathPicker.d",
+    "diagnostics" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/PathPicker.dia",
+    "index-unit-output-path" : "/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/PathPicker.o",
+    "llvm-bc" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/PathPicker.bc",
+    "object" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/PathPicker.o",
+    "swift-dependencies" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/PathPicker.swiftdeps",
+    "swiftmodule" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/PathPicker~partial.swiftmodule"
+  },
+  "/Users/thomas/test-vscode/Hazel-Replacement/Sources/FolderAutomatorCore/Views.swift" : {
+    "const-values" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/Views.swiftconstvalues",
+    "dependencies" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/Views.d",
+    "diagnostics" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/Views.dia",
+    "index-unit-output-path" : "/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/Views.o",
+    "llvm-bc" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/Views.bc",
+    "object" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/Views.o",
+    "swift-dependencies" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/Views.swiftdeps",
+    "swiftmodule" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/Views~partial.swiftmodule"
+  },
+  "/Users/thomas/test-vscode/Hazel-Replacement/Sources/FolderAutomatorSettingsApp/FolderAutomatorSettingsApp.swift" : {
+    "const-values" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/FolderAutomatorSettingsApp.swiftconstvalues",
+    "dependencies" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/FolderAutomatorSettingsApp.d",
+    "diagnostics" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/FolderAutomatorSettingsApp.dia",
+    "index-unit-output-path" : "/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/FolderAutomatorSettingsApp.o",
+    "llvm-bc" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/FolderAutomatorSettingsApp.bc",
+    "object" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/FolderAutomatorSettingsApp.o",
+    "swift-dependencies" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/FolderAutomatorSettingsApp.swiftdeps",
+    "swiftmodule" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorSettingsApp.build/Objects-normal/arm64/FolderAutomatorSettingsApp~partial.swiftmodule"
+  }
+}

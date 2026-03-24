@@ -1,0 +1,19 @@
+{
+  "" : {
+    "diagnostics" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorLoginHelper.build/Objects-normal/arm64/FolderAutomatorLoginHelper-primary.dia",
+    "emit-module-dependencies" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorLoginHelper.build/Objects-normal/arm64/FolderAutomatorLoginHelper-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorLoginHelper.build/Objects-normal/arm64/FolderAutomatorLoginHelper-primary-emit-module.dia",
+    "pch" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorLoginHelper.build/Objects-normal/arm64/FolderAutomatorLoginHelper-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorLoginHelper.build/Objects-normal/arm64/FolderAutomatorLoginHelper-primary.swiftdeps"
+  },
+  "/Users/thomas/test-vscode/Hazel-Replacement/Sources/FolderAutomatorLoginHelper/main.swift" : {
+    "const-values" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorLoginHelper.build/Objects-normal/arm64/main.swiftconstvalues",
+    "dependencies" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorLoginHelper.build/Objects-normal/arm64/main.d",
+    "diagnostics" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorLoginHelper.build/Objects-normal/arm64/main.dia",
+    "index-unit-output-path" : "/FolderAutomator.build/Debug/FolderAutomatorLoginHelper.build/Objects-normal/arm64/main.o",
+    "llvm-bc" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorLoginHelper.build/Objects-normal/arm64/main.bc",
+    "object" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorLoginHelper.build/Objects-normal/arm64/main.o",
+    "swift-dependencies" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorLoginHelper.build/Objects-normal/arm64/main.swiftdeps",
+    "swiftmodule" : "/Users/thomas/test-vscode/Hazel-Replacement/.xcode-derived/Build/Intermediates.noindex/FolderAutomator.build/Debug/FolderAutomatorLoginHelper.build/Objects-normal/arm64/main~partial.swiftmodule"
+  }
+}

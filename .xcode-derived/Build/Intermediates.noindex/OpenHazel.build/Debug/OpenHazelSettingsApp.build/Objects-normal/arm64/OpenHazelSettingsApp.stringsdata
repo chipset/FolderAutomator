@@ -1,0 +1,48 @@
+{
+  "source": "/Users/thomas/test-vscode/Hazel-Replacement/Sources/OpenHazelSettingsApp/OpenHazelSettingsApp.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "OpenHazel Settings",
+        "location": {
+          "startingColumn": 21,
+          "startingLine": 11
+        }
+      },
+      {
+        "comment": "",
+        "key": "Save",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 16
+        }
+      },
+      {
+        "comment": "",
+        "key": "Import",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 21
+        }
+      },
+      {
+        "comment": "",
+        "key": "Export",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 26
+        }
+      },
+      {
+        "comment": "",
+        "key": "Start Monitoring",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 31
+        }
+      }
+    ]
+  },
+  "version": 1
+}
