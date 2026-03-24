@@ -119,6 +119,18 @@ public enum ShellScriptSource: String, Codable, CaseIterable, Sendable, Identifi
 }
 
 public struct RuleAction: Codable, Identifiable, Hashable, Sendable {
+    private enum CodingKeys: String, CodingKey {
+        case id
+        case kind
+        case value
+        case bookmarkData
+        case conflictPolicy
+        case shellScriptSource
+        case useFileLocationAsWorkingDirectory
+        case shellScriptWorkingDirectoryPath
+        case shellScriptWorkingDirectoryBookmarkData
+    }
+
     public var id: UUID
     public var kind: RuleActionKind
     public var value: String
@@ -149,6 +161,19 @@ public struct RuleAction: Codable, Identifiable, Hashable, Sendable {
         self.useFileLocationAsWorkingDirectory = useFileLocationAsWorkingDirectory
         self.shellScriptWorkingDirectoryPath = shellScriptWorkingDirectoryPath
         self.shellScriptWorkingDirectoryBookmarkData = shellScriptWorkingDirectoryBookmarkData
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(UUID.self, forKey: .id)
+        kind = try container.decode(RuleActionKind.self, forKey: .kind)
+        value = try container.decode(String.self, forKey: .value)
+        bookmarkData = try container.decodeIfPresent(String.self, forKey: .bookmarkData)
+        conflictPolicy = try container.decodeIfPresent(ConflictPolicy.self, forKey: .conflictPolicy) ?? .unique
+        shellScriptSource = try container.decodeIfPresent(ShellScriptSource.self, forKey: .shellScriptSource) ?? .inline
+        useFileLocationAsWorkingDirectory = try container.decodeIfPresent(Bool.self, forKey: .useFileLocationAsWorkingDirectory) ?? true
+        shellScriptWorkingDirectoryPath = try container.decodeIfPresent(String.self, forKey: .shellScriptWorkingDirectoryPath) ?? ""
+        shellScriptWorkingDirectoryBookmarkData = try container.decodeIfPresent(String.self, forKey: .shellScriptWorkingDirectoryBookmarkData)
     }
 }
 
@@ -279,6 +304,18 @@ public struct AppConfiguration: Codable, Hashable, Sendable {
             ]
         )
     }()
+}
+
+public struct VersionedAppConfiguration: Codable, Hashable, Sendable {
+    public static let currentVersion = 2
+
+    public var version: Int
+    public var configuration: AppConfiguration
+
+    public init(version: Int = VersionedAppConfiguration.currentVersion, configuration: AppConfiguration) {
+        self.version = version
+        self.configuration = configuration
+    }
 }
 
 public struct ActivityItem: Codable, Identifiable, Hashable, Sendable {

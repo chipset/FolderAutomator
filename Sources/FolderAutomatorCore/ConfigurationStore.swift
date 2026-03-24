@@ -3,6 +3,17 @@ import Foundation
 public actor ConfigurationStore {
     public static let shared = ConfigurationStore()
 
+    public enum ConfigurationError: LocalizedError {
+        case unsupportedConfigurationVersion(Int)
+
+        public var errorDescription: String? {
+            switch self {
+            case .unsupportedConfigurationVersion(let version):
+                return "Unsupported configuration version: \(version)"
+            }
+        }
+    }
+
     private let encoder: JSONEncoder
     private let decoder: JSONDecoder
     private let configURL: URL
@@ -47,12 +58,20 @@ public actor ConfigurationStore {
         }
 
         let data = try Data(contentsOf: configURL)
+        if let versioned = try? decoder.decode(VersionedAppConfiguration.self, from: data) {
+            guard versioned.version <= VersionedAppConfiguration.currentVersion else {
+                throw ConfigurationError.unsupportedConfigurationVersion(versioned.version)
+            }
+            return try migrate(versioned)
+        }
+
+        // Legacy unversioned configuration.json files stored the raw AppConfiguration object.
         return try decoder.decode(AppConfiguration.self, from: data)
     }
 
     public func saveConfiguration(_ configuration: AppConfiguration) throws {
         try ensureStorage()
-        let data = try encoder.encode(configuration)
+        let data = try encoder.encode(VersionedAppConfiguration(configuration: configuration))
         try data.write(to: configURL, options: .atomic)
     }
 
@@ -133,12 +152,18 @@ public actor ConfigurationStore {
 
     public func exportConfiguration(_ configuration: AppConfiguration, to destinationURL: URL) throws {
         try FileManager.default.createDirectory(at: destinationURL.deletingLastPathComponent(), withIntermediateDirectories: true)
-        let data = try encoder.encode(configuration)
+        let data = try encoder.encode(VersionedAppConfiguration(configuration: configuration))
         try data.write(to: destinationURL, options: .atomic)
     }
 
     public func importConfiguration(from sourceURL: URL) throws -> AppConfiguration {
         let data = try Data(contentsOf: sourceURL)
+        if let versioned = try? decoder.decode(VersionedAppConfiguration.self, from: data) {
+            guard versioned.version <= VersionedAppConfiguration.currentVersion else {
+                throw ConfigurationError.unsupportedConfigurationVersion(versioned.version)
+            }
+            return try migrate(versioned)
+        }
         return try decoder.decode(AppConfiguration.self, from: data)
     }
 
@@ -169,5 +194,14 @@ public actor ConfigurationStore {
         }
 
         return components.joined(separator: " | ") + "\n"
+    }
+
+    private func migrate(_ versioned: VersionedAppConfiguration) throws -> AppConfiguration {
+        switch versioned.version {
+        case 1, 2:
+            return versioned.configuration
+        default:
+            throw ConfigurationError.unsupportedConfigurationVersion(versioned.version)
+        }
     }
 }
