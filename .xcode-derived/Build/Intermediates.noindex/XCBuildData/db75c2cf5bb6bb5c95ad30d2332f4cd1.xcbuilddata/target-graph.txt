@@ -1,4 +1,0 @@
-Target dependency graph (2 targets)
-Target 'OpenHazelSettingsApp' in project 'OpenHazel'
-➜ Explicit dependency on target 'OpenHazelLoginHelper' in project 'OpenHazel'
-Target 'OpenHazelLoginHelper' in project 'OpenHazel' (no dependencies)

@@ -1,2 +1,0 @@
-Target dependency graph (1 target)
-Target 'OpenHazelApp' in project 'OpenHazel' (no dependencies)

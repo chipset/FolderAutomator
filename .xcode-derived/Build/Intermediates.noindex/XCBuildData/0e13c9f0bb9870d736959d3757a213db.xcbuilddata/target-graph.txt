@@ -1,4 +1,0 @@
-Target dependency graph (2 targets)
-Target 'FolderAutomatorSettingsApp' in project 'FolderAutomator'
-➜ Explicit dependency on target 'FolderAutomatorLoginHelper' in project 'FolderAutomator'
-Target 'FolderAutomatorLoginHelper' in project 'FolderAutomator' (no dependencies)
