@@ -398,6 +398,9 @@ struct RuleEditorView: View {
     @Binding var rule: Rule
     @State private var draggedActionID: UUID?
     @State private var hoveredActionID: UUID?
+    @State private var manualRunResults: [ActivityItem] = []
+    @State private var manualRunFilePath = ""
+    @State private var showingManualRunResults = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
@@ -406,6 +409,9 @@ struct RuleEditorView: View {
                 Toggle("Enabled", isOn: $rule.isEnabled)
                     .toggleStyle(.switch)
                     .frame(width: 130)
+                Button("Run Dry-Run…") {
+                    runRuleManually()
+                }
             }
 
             HStack {
@@ -507,6 +513,30 @@ struct RuleEditorView: View {
             RoundedRectangle(cornerRadius: 18, style: .continuous)
                 .fill(Color(nsColor: .controlBackgroundColor))
         )
+        .sheet(isPresented: $showingManualRunResults) {
+            NavigationStack {
+                VStack(alignment: .leading, spacing: 16) {
+                    Text("Dry-run preview for a single rule.")
+                        .foregroundStyle(.secondary)
+                    if manualRunFilePath.isEmpty == false {
+                        Text(manualRunFilePath)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .textSelection(.enabled)
+                    }
+                    PreviewResultsView(items: manualRunResults)
+                    HStack {
+                        Spacer()
+                        Button("Close") {
+                            showingManualRunResults = false
+                        }
+                    }
+                }
+                .padding(20)
+                .frame(minWidth: 520, minHeight: 380)
+                .navigationTitle(rule.name.isEmpty ? "Rule Preview" : rule.name)
+            }
+        }
     }
 
     private func moveAction(from sourceID: UUID, to destinationID: UUID) {
@@ -535,6 +565,15 @@ struct RuleEditorView: View {
         case .appendDateToName: return "Append Date"
         case .notify: return "Notify"
         case .openWithDefaultApp: return "Open With Default App"
+        }
+    }
+
+    private func runRuleManually() {
+        guard let path = PathPicker.chooseFile() else { return }
+        manualRunFilePath = path
+        Task {
+            manualRunResults = await model.previewRule(folderID: folderID, ruleID: rule.id, filePath: path)
+            showingManualRunResults = true
         }
     }
 }

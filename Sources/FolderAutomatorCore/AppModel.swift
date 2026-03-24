@@ -295,12 +295,35 @@ public final class FolderAutomatorModel: ObservableObject {
     }
 
     public func preview(folderID: UUID, filePath: String) async {
+        previewItems = await previewActivityItems(folderID: folderID, ruleID: nil, filePath: filePath)
+    }
+
+    public func previewRule(folderID: UUID, ruleID: UUID, filePath: String) async -> [ActivityItem] {
+        await previewActivityItems(folderID: folderID, ruleID: ruleID, filePath: filePath)
+    }
+
+    private func previewActivityItems(folderID: UUID, ruleID: UUID?, filePath: String) async -> [ActivityItem] {
         guard
             let folder = configuration.folders.first(where: { $0.id == folderID }),
             !filePath.isEmpty
         else {
-            previewItems = [.init(kind: .error, message: "Choose a file to preview.")]
-            return
+            return [.init(kind: .error, message: "Choose a file to preview.")]
+        }
+
+        let previewFolder: WatchedFolder
+        if let ruleID {
+            let matchingRules = folder.rules.filter { $0.id == ruleID }
+            previewFolder = WatchedFolder(
+                id: folder.id,
+                name: folder.name,
+                path: folder.path,
+                bookmarkData: folder.bookmarkData,
+                isEnabled: folder.isEnabled,
+                includeSubfolders: folder.includeSubfolders,
+                rules: matchingRules
+            )
+        } else {
+            previewFolder = folder
         }
 
         let url = URL(fileURLWithPath: filePath)
@@ -313,10 +336,12 @@ public final class FolderAutomatorModel: ObservableObject {
         )
 
         do {
-            let result = try engine.evaluate(folder: folder, fileURL: url, options: options)
-            previewItems = result.activity.isEmpty ? [.init(kind: .info, message: "No rules would run for \(url.lastPathComponent).", filePath: url.path)] : result.activity
+            let result = try engine.evaluate(folder: previewFolder, fileURL: url, options: options)
+            return result.activity.isEmpty
+                ? [.init(kind: .info, message: "No rules would run for \(url.lastPathComponent).", filePath: url.path)]
+                : result.activity
         } catch {
-            previewItems = [.init(kind: .error, message: "Preview failed: \(error.localizedDescription)", filePath: url.path)]
+            return [.init(kind: .error, message: "Preview failed: \(error.localizedDescription)", filePath: url.path)]
         }
     }
 
