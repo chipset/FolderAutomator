@@ -29,6 +29,9 @@
 		AA0000140000000000000001 /* BookmarkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA10000F0000000000000001 /* BookmarkManager.swift */; };
 		AA0000150000000000000001 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1000100000000000000001 /* main.swift */; };
 		AA0000160000000000000001 /* FolderAutomatorLoginHelper.app in Embed Login Helper */ = {isa = PBXBuildFile; fileRef = AA1000110000000000000001 /* FolderAutomatorLoginHelper.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		AA0000170000000000000001 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA1000130000000000000001 /* Assets.xcassets */; };
+		AA0000180000000000000001 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA1000130000000000000001 /* Assets.xcassets */; };
+		AA0000190000000000000001 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA1000130000000000000001 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -97,6 +100,7 @@
 		AA1000100000000000000001 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/FolderAutomatorLoginHelper/main.swift; sourceTree = SOURCE_ROOT; };
 		AA1000110000000000000001 /* FolderAutomatorLoginHelper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = FolderAutomatorLoginHelper.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA1000120000000000000001 /* FolderAutomatorLoginHelper-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = FolderAutomatorLoginHelper-Info.plist; sourceTree = SOURCE_ROOT; };
+		AA1000130000000000000001 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -147,6 +151,7 @@
 		AA3000030000000000000001 /* Config */ = {
 			isa = PBXGroup;
 			children = (
+				AA1000130000000000000001 /* Assets.xcassets */,
 				AA10000D0000000000000001 /* FolderAutomatorApp-Info.plist */,
 				AA10000E0000000000000001 /* FolderAutomatorSettingsApp-Info.plist */,
 				AA1000120000000000000001 /* FolderAutomatorLoginHelper-Info.plist */,
@@ -307,6 +312,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AA0000170000000000000001 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -314,6 +320,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AA0000180000000000000001 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -321,6 +328,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AA0000190000000000000001 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -390,6 +398,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = FolderAutomatorApp-Info.plist;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.folderautomator.runner;
@@ -410,6 +419,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = FolderAutomatorApp-Info.plist;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.folderautomator.runner;
@@ -431,6 +441,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = FolderAutomatorSettingsApp-Info.plist;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.folderautomator.settings;
@@ -452,6 +463,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = FolderAutomatorSettingsApp-Info.plist;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.folderautomator.settings;
@@ -500,6 +512,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = FolderAutomatorLoginHelper-Info.plist;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.folderautomator.settings.loginhelper;
@@ -518,6 +531,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = FolderAutomatorLoginHelper-Info.plist;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.folderautomator.settings.loginhelper;
