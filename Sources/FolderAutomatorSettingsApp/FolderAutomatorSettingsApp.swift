@@ -13,11 +13,25 @@ struct FolderAutomatorSettingsAppMain: App {
                 .frame(minWidth: 900, minHeight: 620)
                 .toolbar {
                     ToolbarItemGroup {
-                        Button("Save") {
+                        Button {
                             Task {
                                 await model.save()
                             }
+                        } label: {
+                            Label(
+                                model.isSavingConfiguration ? "Saving…" : "Save",
+                                systemImage: model.hasUnsavedChanges ? "circle.fill" : "checkmark.circle"
+                            )
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 6)
+                            .foregroundStyle(model.hasUnsavedChanges ? Color.white : Color.primary)
+                            .background(
+                                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                    .fill(model.hasUnsavedChanges ? Color.orange : Color.secondary.opacity(0.14))
+                            )
                         }
+                        .buttonStyle(.plain)
+                        .disabled(model.isSavingConfiguration || !model.hasUnsavedChanges)
                         Button("Import") {
                             Task {
                                 await model.importConfiguration()

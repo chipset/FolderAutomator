@@ -335,10 +335,163 @@ final class FileRuleEngineTests: XCTestCase {
         XCTAssertTrue(FileManager.default.fileExists(atPath: source.path))
     }
 
+    func testDeleteActionRemovesFile() throws {
+        let directory = try makeTemporaryDirectory()
+        let source = directory.appendingPathComponent("old.tmp")
+        try "temporary".data(using: .utf8)?.write(to: source)
+
+        let rule = Rule(
+            name: "Delete temp files",
+            conditions: [RuleCondition(kind: .fileExtension, operator: .equals, value: "tmp")],
+            actions: [RuleAction(kind: .delete, value: "")]
+        )
+
+        let result = try FileRuleEngine().evaluate(
+            folder: WatchedFolder(name: "Inbox", path: directory.path, rules: [rule]),
+            fileURL: source,
+            options: RuleExecutionOptions(dryRun: false, skipPreviouslyMatchedFiles: false)
+        )
+
+        XCTAssertEqual(result.matchedRuleIDs, [rule.id])
+        XCTAssertFalse(FileManager.default.fileExists(atPath: source.path))
+        XCTAssertTrue(result.activity.contains(where: { $0.message.contains("Permanently deleted") }))
+    }
+
+    func testMoveReplaceOverwritesExistingDestinationFile() throws {
+        let directory = try makeTemporaryDirectory()
+        let source = directory.appendingPathComponent("invoice.txt")
+        let destination = directory.appendingPathComponent("Sorted", isDirectory: true)
+        try FileManager.default.createDirectory(at: destination, withIntermediateDirectories: true)
+        let existing = destination.appendingPathComponent("invoice.txt")
+        try "new".data(using: .utf8)?.write(to: source)
+        try "old".data(using: .utf8)?.write(to: existing)
+
+        let rule = Rule(
+            name: "Move and overwrite",
+            conditions: [RuleCondition(kind: .name, operator: .contains, value: "invoice")],
+            actions: [RuleAction(kind: .move, value: destination.path, conflictPolicy: .replace)]
+        )
+
+        let result = try FileRuleEngine().evaluate(
+            folder: WatchedFolder(name: "Inbox", path: directory.path, rules: [rule]),
+            fileURL: source,
+            options: RuleExecutionOptions(dryRun: false, skipPreviouslyMatchedFiles: false)
+        )
+
+        XCTAssertEqual(result.matchedRuleIDs, [rule.id])
+        XCTAssertFalse(FileManager.default.fileExists(atPath: source.path))
+        XCTAssertEqual(try String(contentsOf: existing), "new")
+        XCTAssertTrue(result.activity.contains(where: { $0.message.contains("Moved") }))
+    }
+
+    func testMoveSkipLeavesSourceUntouchedWhenDestinationExists() throws {
+        let directory = try makeTemporaryDirectory()
+        let source = directory.appendingPathComponent("invoice.txt")
+        let destination = directory.appendingPathComponent("Sorted", isDirectory: true)
+        try FileManager.default.createDirectory(at: destination, withIntermediateDirectories: true)
+        let existing = destination.appendingPathComponent("invoice.txt")
+        try "new".data(using: .utf8)?.write(to: source)
+        try "old".data(using: .utf8)?.write(to: existing)
+
+        let rule = Rule(
+            name: "Move and skip",
+            conditions: [RuleCondition(kind: .name, operator: .contains, value: "invoice")],
+            actions: [RuleAction(kind: .move, value: destination.path, conflictPolicy: .skip)]
+        )
+
+        let result = try FileRuleEngine().evaluate(
+            folder: WatchedFolder(name: "Inbox", path: directory.path, rules: [rule]),
+            fileURL: source,
+            options: RuleExecutionOptions(dryRun: false, skipPreviouslyMatchedFiles: false)
+        )
+
+        XCTAssertEqual(result.matchedRuleIDs, [rule.id])
+        XCTAssertTrue(FileManager.default.fileExists(atPath: source.path))
+        XCTAssertEqual(try String(contentsOf: source), "new")
+        XCTAssertEqual(try String(contentsOf: existing), "old")
+        XCTAssertTrue(result.activity.contains(where: { $0.message.contains("Skipped move") }))
+    }
+
+    func testInlineShellScriptActionRunsScriptBody() throws {
+        let directory = try makeTemporaryDirectory()
+        let source = directory.appendingPathComponent("example.txt")
+        let output = directory.appendingPathComponent("inline-output.txt")
+        try "sample".data(using: .utf8)?.write(to: source)
+
+        let rule = Rule(
+            name: "Inline script",
+            conditions: [RuleCondition(kind: .fileExtension, operator: .equals, value: "txt")],
+            actions: [
+                RuleAction(
+                    kind: .shellScript,
+                    value: "pwd > '\(output.path)'"
+                )
+            ]
+        )
+
+        let result = try FileRuleEngine().evaluate(
+            folder: WatchedFolder(name: "Inbox", path: directory.path, rules: [rule]),
+            fileURL: source,
+            options: RuleExecutionOptions(dryRun: false, skipPreviouslyMatchedFiles: false)
+        )
+
+        XCTAssertEqual(result.matchedRuleIDs, [rule.id])
+        XCTAssertEqual(
+            normalizePath(try String(contentsOf: output).trimmingCharacters(in: .whitespacesAndNewlines)),
+            normalizePath(directory.path)
+        )
+        XCTAssertTrue(result.activity.contains(where: { $0.message.contains("Ran shell script") }))
+    }
+
+    func testFileShellScriptActionRunsSelectedScriptFileInSelectedWorkingDirectory() throws {
+        let directory = try makeTemporaryDirectory()
+        let source = directory.appendingPathComponent("example.txt")
+        let script = directory.appendingPathComponent("runner.zsh")
+        let workingDirectory = directory.appendingPathComponent("Scripts", isDirectory: true)
+        let output = directory.appendingPathComponent("file-output.txt")
+        try "sample".data(using: .utf8)?.write(to: source)
+        try FileManager.default.createDirectory(at: workingDirectory, withIntermediateDirectories: true)
+        let scriptBody = #"pwd > "__OUTPUT__""#
+            .replacingOccurrences(of: "__OUTPUT__", with: output.path)
+        try XCTUnwrap(scriptBody.data(using: .utf8)).write(to: script)
+
+        let rule = Rule(
+            name: "File script",
+            conditions: [RuleCondition(kind: .fileExtension, operator: .equals, value: "txt")],
+            actions: [
+                RuleAction(
+                    kind: .shellScript,
+                    value: script.path,
+                    bookmarkData: nil,
+                    shellScriptSource: .file,
+                    useFileLocationAsWorkingDirectory: false,
+                    shellScriptWorkingDirectoryPath: workingDirectory.path
+                )
+            ]
+        )
+
+        let result = try FileRuleEngine().evaluate(
+            folder: WatchedFolder(name: "Inbox", path: directory.path, rules: [rule]),
+            fileURL: source,
+            options: RuleExecutionOptions(dryRun: false, skipPreviouslyMatchedFiles: false)
+        )
+
+        XCTAssertEqual(result.matchedRuleIDs, [rule.id])
+        XCTAssertEqual(
+            normalizePath(try String(contentsOf: output).trimmingCharacters(in: .whitespacesAndNewlines)),
+            normalizePath(workingDirectory.path)
+        )
+        XCTAssertTrue(result.activity.contains(where: { $0.message.contains("Ran shell script") }))
+    }
+
     private func makeTemporaryDirectory() throws -> URL {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         return directory
+    }
+
+    private func normalizePath(_ path: String) -> String {
+        URL(fileURLWithPath: path).resolvingSymlinksInPath().path
     }
 
     private func zipDirectory(at sourceDirectory: URL, to archiveURL: URL) throws {

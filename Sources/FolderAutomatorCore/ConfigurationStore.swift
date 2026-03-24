@@ -7,8 +7,10 @@ public actor ConfigurationStore {
     private let decoder: JSONDecoder
     private let configURL: URL
     private let activityURL: URL
+    private let activityLogURL: URL
     private let processedURL: URL
     private let undoOperationsURL: URL
+    private let logFormatter: ISO8601DateFormatter
 
     public init(baseURL: URL? = nil, fileManager: FileManager = .default) {
         encoder = JSONEncoder()
@@ -17,6 +19,9 @@ public actor ConfigurationStore {
 
         decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
+
+        logFormatter = ISO8601DateFormatter()
+        logFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
 
         let resolvedBaseURL: URL
         if let baseURL {
@@ -27,6 +32,7 @@ public actor ConfigurationStore {
         }
         configURL = resolvedBaseURL.appendingPathComponent("configuration.json")
         activityURL = resolvedBaseURL.appendingPathComponent("activity.json")
+        activityLogURL = resolvedBaseURL.appendingPathComponent("activity.log")
         processedURL = resolvedBaseURL.appendingPathComponent("processed-files.json")
         undoOperationsURL = resolvedBaseURL.appendingPathComponent("undo-operations.json")
     }
@@ -65,6 +71,30 @@ public actor ConfigurationStore {
         try ensureStorage()
         let data = try encoder.encode(items)
         try data.write(to: activityURL, options: .atomic)
+    }
+
+    public func appendActivityLog(_ item: ActivityItem) throws {
+        try ensureStorage()
+        let line = formatLogLine(for: item)
+        let data = Data(line.utf8)
+
+        if FileManager.default.fileExists(atPath: activityLogURL.path) == false {
+            try data.write(to: activityLogURL, options: .atomic)
+            return
+        }
+
+        let handle = try FileHandle(forWritingTo: activityLogURL)
+        defer { try? handle.close() }
+        try handle.seekToEnd()
+        try handle.write(contentsOf: data)
+    }
+
+    public func loadActivityLog() throws -> String {
+        try ensureStorage()
+        guard FileManager.default.fileExists(atPath: activityLogURL.path) else {
+            return ""
+        }
+        return try String(contentsOf: activityLogURL)
     }
 
     public func loadProcessedFiles() throws -> [String: ProcessedFileRecord] {
@@ -112,8 +142,32 @@ public actor ConfigurationStore {
         return try decoder.decode(AppConfiguration.self, from: data)
     }
 
+    public func currentActivityLogURL() -> URL {
+        activityLogURL
+    }
+
     private func ensureStorage() throws {
         let directory = configURL.deletingLastPathComponent()
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+    }
+
+    private func formatLogLine(for item: ActivityItem) -> String {
+        var components = [
+            logFormatter.string(from: item.timestamp),
+            "[\(item.kind.rawValue.uppercased())]",
+            item.message
+        ]
+
+        if let ruleName = item.ruleName, ruleName.isEmpty == false {
+            components.append("rule=\(ruleName)")
+        }
+        if let filePath = item.filePath, filePath.isEmpty == false {
+            components.append("file=\(filePath)")
+        }
+        if let undoSummary = item.undoSummary, undoSummary.isEmpty == false {
+            components.append("undo=\(undoSummary)")
+        }
+
+        return components.joined(separator: " | ") + "\n"
     }
 }

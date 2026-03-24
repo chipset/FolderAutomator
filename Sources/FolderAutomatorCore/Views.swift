@@ -89,16 +89,6 @@ public struct SettingsRootView: View {
             selectedFolderID = model.configuration.folders.first?.id
             selectedPreviewFolderID = model.configuration.folders.first?.id
         }
-        .onReceive(model.$configuration.dropFirst()) { _ in
-            Task {
-                await model.save()
-            }
-        }
-        .onDisappear {
-            Task {
-                await model.save()
-            }
-        }
     }
 
     @ViewBuilder
@@ -406,6 +396,8 @@ struct RuleEditorView: View {
     @ObservedObject var model: FolderAutomatorModel
     let folderID: UUID
     @Binding var rule: Rule
+    @State private var draggedActionID: UUID?
+    @State private var hoveredActionID: UUID?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
@@ -466,13 +458,43 @@ struct RuleEditorView: View {
             }
 
             VStack(alignment: .leading, spacing: 10) {
-                Text("Actions")
-                    .font(.headline)
-                ForEach($rule.actions) { $action in
-                    ActionEditorRow(model: model, folderID: folderID, ruleID: rule.id, action: $action)
+                HStack {
+                    Text("Actions")
+                        .font(.headline)
+                    Spacer()
+                    Text("Drag to reorder")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
-                .onDelete { offsets in
-                    rule.actions.remove(atOffsets: offsets)
+                ForEach($rule.actions) { $action in
+                    ActionEditorRow(
+                        model: model,
+                        folderID: folderID,
+                        ruleID: rule.id,
+                        action: $action,
+                        isDropTargeted: hoveredActionID == action.id
+                    ) {
+                        rule.actions.removeAll { $0.id == action.id }
+                    }
+                    .draggable(action.id.uuidString) {
+                        ActionDragBadge(label: actionLabel(for: action.kind))
+                            .onAppear {
+                                draggedActionID = action.id
+                            }
+                    }
+                    .dropDestination(for: String.self) { items, _ in
+                        guard let sourceIDString = items.first,
+                              let sourceID = UUID(uuidString: sourceIDString)
+                        else {
+                            return false
+                        }
+                        moveAction(from: sourceID, to: action.id)
+                        hoveredActionID = nil
+                        draggedActionID = nil
+                        return true
+                    } isTargeted: { isTargeted in
+                        hoveredActionID = isTargeted ? action.id : nil
+                    }
                 }
 
                 Button("Add Action") {
@@ -485,6 +507,35 @@ struct RuleEditorView: View {
             RoundedRectangle(cornerRadius: 18, style: .continuous)
                 .fill(Color(nsColor: .controlBackgroundColor))
         )
+    }
+
+    private func moveAction(from sourceID: UUID, to destinationID: UUID) {
+        guard sourceID != destinationID,
+              let sourceIndex = rule.actions.firstIndex(where: { $0.id == sourceID }),
+              let destinationIndex = rule.actions.firstIndex(where: { $0.id == destinationID })
+        else {
+            return
+        }
+
+        let adjustedDestination = sourceIndex < destinationIndex ? destinationIndex + 1 : destinationIndex
+        rule.actions.move(fromOffsets: IndexSet(integer: sourceIndex), toOffset: adjustedDestination)
+    }
+
+    private func actionLabel(for kind: RuleActionKind) -> String {
+        switch kind {
+        case .move: return "Move"
+        case .copy: return "Copy"
+        case .rename: return "Rename"
+        case .addTag: return "Add Finder Tag"
+        case .trash: return "Trash"
+        case .delete: return "Delete Permanently"
+        case .shellScript: return "Shell Script"
+        case .sortIntoSubfolder: return "Sort Into Subfolder"
+        case .revealInFinder: return "Reveal In Finder"
+        case .appendDateToName: return "Append Date"
+        case .notify: return "Notify"
+        case .openWithDefaultApp: return "Open With Default App"
+        }
     }
 }
 
@@ -624,15 +675,94 @@ struct ActionEditorRow: View {
     let folderID: UUID
     let ruleID: UUID
     @Binding var action: RuleAction
+    let isDropTargeted: Bool
+    let onRemove: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
+                Image(systemName: "line.3.horizontal")
+                    .foregroundStyle(.secondary)
                 Picker("Action", selection: $action.kind) {
                     ForEach(RuleActionKind.allCases) { kind in
                         Text(label(for: kind)).tag(kind)
                     }
                 }
+                Button(role: .destructive, action: onRemove) {
+                    Image(systemName: "trash")
+                }
+                .help("Remove Action")
+            }
+            actionValueEditor
+            if supportsConflictPolicy(action.kind) {
+                Picker(conflictLabel(for: action.kind), selection: $action.conflictPolicy) {
+                    ForEach(ConflictPolicy.allCases) { policy in
+                        Text(conflictPolicyLabel(policy)).tag(policy)
+                    }
+                }
+                .pickerStyle(.segmented)
+            }
+        }
+        .padding(10)
+        .background(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(isDropTargeted ? Color.accentColor.opacity(0.12) : Color.white.opacity(0.55))
+        )
+    }
+
+    @ViewBuilder
+    private var actionValueEditor: some View {
+        switch action.kind {
+        case .shellScript:
+            VStack(alignment: .leading, spacing: 8) {
+                Picker("Source", selection: $action.shellScriptSource) {
+                    Text("Inline").tag(ShellScriptSource.inline)
+                    Text("Script File").tag(ShellScriptSource.file)
+                }
+                .pickerStyle(.segmented)
+
+                switch action.shellScriptSource {
+                case .inline:
+                    TextEditor(text: $action.value)
+                        .font(.system(.body, design: .monospaced))
+                        .frame(minHeight: 96)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                .stroke(Color.secondary.opacity(0.25))
+                        )
+                    Text("Available env vars: OPEN_HAZEL_FILE_PATH and OPEN_HAZEL_FILE_NAME")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                case .file:
+                    HStack {
+                        TextField("/path/to/script.sh", text: $action.value)
+                            .textFieldStyle(.roundedBorder)
+                        Button("Choose Script") {
+                            model.chooseActionPath(folderID: folderID, ruleID: ruleID, actionID: action.id)
+                        }
+                    }
+                }
+
+                Toggle("Use file location as working directory", isOn: $action.useFileLocationAsWorkingDirectory)
+
+                if action.useFileLocationAsWorkingDirectory == false {
+                    HStack {
+                        TextField("/path/to/working-directory", text: $action.shellScriptWorkingDirectoryPath)
+                            .textFieldStyle(.roundedBorder)
+                        Button("Choose Folder") {
+                            model.chooseActionWorkingDirectory(folderID: folderID, ruleID: ruleID, actionID: action.id)
+                        }
+                    }
+                }
+
+                Text(action.useFileLocationAsWorkingDirectory
+                    ? "The script runs in the matched file's folder."
+                    : "The script runs in the selected working directory.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        default:
+            HStack {
                 TextField(placeholder(for: action.kind), text: $action.value)
                     .textFieldStyle(.roundedBorder)
                 if action.kind == .move || action.kind == .copy {
@@ -640,14 +770,6 @@ struct ActionEditorRow: View {
                         model.chooseActionPath(folderID: folderID, ruleID: ruleID, actionID: action.id)
                     }
                 }
-            }
-            if [.move, .copy, .rename, .sortIntoSubfolder, .appendDateToName].contains(action.kind) {
-                Picker("Conflict", selection: $action.conflictPolicy) {
-                    ForEach(ConflictPolicy.allCases) { policy in
-                        Text(policy.rawValue.capitalized).tag(policy)
-                    }
-                }
-                .pickerStyle(.segmented)
             }
         }
     }
@@ -659,6 +781,7 @@ struct ActionEditorRow: View {
         case .rename: return "Rename"
         case .addTag: return "Add Finder Tag"
         case .trash: return "Trash"
+        case .delete: return "Delete Permanently"
         case .shellScript: return "Shell Script"
         case .sortIntoSubfolder: return "Sort Into Subfolder"
         case .revealInFinder: return "Reveal In Finder"
@@ -676,7 +799,7 @@ struct ActionEditorRow: View {
             return "{date}-{name}-{filenameDate}.{ext}"
         case .addTag:
             return "Finder tag"
-        case .trash:
+        case .trash, .delete:
             return "No value needed"
         case .shellScript:
             return "echo \"$OPEN_HAZEL_FILE_PATH\""
@@ -691,6 +814,52 @@ struct ActionEditorRow: View {
         case .openWithDefaultApp:
             return "No value needed"
         }
+    }
+
+    private func supportsConflictPolicy(_ kind: RuleActionKind) -> Bool {
+        [.move, .copy, .rename, .sortIntoSubfolder, .appendDateToName].contains(kind)
+    }
+
+    private func conflictLabel(for kind: RuleActionKind) -> String {
+        switch kind {
+        case .move:
+            return "If destination exists"
+        case .copy:
+            return "If copy exists"
+        case .rename, .sortIntoSubfolder, .appendDateToName:
+            return "If target exists"
+        default:
+            return "Conflict"
+        }
+    }
+
+    private func conflictPolicyLabel(_ policy: ConflictPolicy) -> String {
+        switch policy {
+        case .unique:
+            return "Keep Both"
+        case .replace:
+            return "Overwrite"
+        case .skip:
+            return "Skip"
+        }
+    }
+}
+
+struct ActionDragBadge: View {
+    let label: String
+
+    var body: some View {
+        HStack(spacing: 6) {
+            Image(systemName: "line.3.horizontal")
+            Text(label)
+                .font(.caption.weight(.semibold))
+        }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 6)
+        .background(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .fill(Color(nsColor: .windowBackgroundColor))
+        )
     }
 }
 

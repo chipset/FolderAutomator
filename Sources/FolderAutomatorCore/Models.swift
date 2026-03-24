@@ -100,6 +100,7 @@ public enum RuleActionKind: String, Codable, CaseIterable, Sendable, Identifiabl
     case rename
     case addTag
     case trash
+    case delete
     case shellScript
     case sortIntoSubfolder
     case revealInFinder
@@ -110,25 +111,44 @@ public enum RuleActionKind: String, Codable, CaseIterable, Sendable, Identifiabl
     public var id: String { rawValue }
 }
 
+public enum ShellScriptSource: String, Codable, CaseIterable, Sendable, Identifiable {
+    case inline
+    case file
+
+    public var id: String { rawValue }
+}
+
 public struct RuleAction: Codable, Identifiable, Hashable, Sendable {
     public var id: UUID
     public var kind: RuleActionKind
     public var value: String
     public var bookmarkData: String?
     public var conflictPolicy: ConflictPolicy
+    public var shellScriptSource: ShellScriptSource
+    public var useFileLocationAsWorkingDirectory: Bool
+    public var shellScriptWorkingDirectoryPath: String
+    public var shellScriptWorkingDirectoryBookmarkData: String?
 
     public init(
         id: UUID = UUID(),
         kind: RuleActionKind,
         value: String,
         bookmarkData: String? = nil,
-        conflictPolicy: ConflictPolicy = .unique
+        conflictPolicy: ConflictPolicy = .unique,
+        shellScriptSource: ShellScriptSource = .inline,
+        useFileLocationAsWorkingDirectory: Bool = true,
+        shellScriptWorkingDirectoryPath: String = "",
+        shellScriptWorkingDirectoryBookmarkData: String? = nil
     ) {
         self.id = id
         self.kind = kind
         self.value = value
         self.bookmarkData = bookmarkData
         self.conflictPolicy = conflictPolicy
+        self.shellScriptSource = shellScriptSource
+        self.useFileLocationAsWorkingDirectory = useFileLocationAsWorkingDirectory
+        self.shellScriptWorkingDirectoryPath = shellScriptWorkingDirectoryPath
+        self.shellScriptWorkingDirectoryBookmarkData = shellScriptWorkingDirectoryBookmarkData
     }
 }
 

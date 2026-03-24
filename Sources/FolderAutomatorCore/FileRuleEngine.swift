@@ -367,7 +367,7 @@ public final class FileRuleEngine: @unchecked Sendable {
             if dryRun {
                 return (targetURL, "Would move \(fileURL.lastPathComponent) to \(destinationDirectory.path)", "Move \(targetURL.lastPathComponent) back to \(fileURL.deletingLastPathComponent().path)", undo)
             }
-            guard targetURL != fileURL || action.conflictPolicy != .skip else {
+            if shouldSkipOperation(from: fileURL, to: targetURL, policy: action.conflictPolicy) {
                 return (fileURL, "Skipped move for \(fileURL.lastPathComponent) because destination already exists", nil, nil)
             }
             if action.conflictPolicy == .replace, fileManager.fileExists(atPath: targetURL.path) {
@@ -383,7 +383,7 @@ public final class FileRuleEngine: @unchecked Sendable {
             if dryRun {
                 return (fileURL, "Would copy \(fileURL.lastPathComponent) to \(destinationDirectory.path)", "Delete copied file at \(targetURL.path)", undo)
             }
-            guard targetURL != fileURL || action.conflictPolicy != .skip else {
+            if shouldSkipOperation(from: fileURL, to: targetURL, policy: action.conflictPolicy) {
                 return (fileURL, "Skipped copy for \(fileURL.lastPathComponent) because destination already exists", nil, nil)
             }
             if action.conflictPolicy == .replace, fileManager.fileExists(atPath: targetURL.path) {
@@ -401,7 +401,7 @@ public final class FileRuleEngine: @unchecked Sendable {
             if dryRun {
                 return (targetURL, "Would rename \(fileURL.lastPathComponent) to \(targetURL.lastPathComponent)", "Rename \(targetURL.lastPathComponent) back to \(fileURL.lastPathComponent)", undo)
             }
-            guard targetURL != fileURL || action.conflictPolicy != .skip else {
+            if shouldSkipOperation(from: fileURL, to: targetURL, policy: action.conflictPolicy) {
                 return (fileURL, "Skipped rename for \(fileURL.lastPathComponent) because target already exists", nil, nil)
             }
             if action.conflictPolicy == .replace, fileManager.fileExists(atPath: targetURL.path) {
@@ -426,16 +426,30 @@ public final class FileRuleEngine: @unchecked Sendable {
             let trashedURL = resultingItemURL as URL? ?? fileURL
             let undo = UndoOperation(kind: .trash, sourcePath: trashedURL.path, destinationPath: fileURL.path)
             return (trashedURL, "Moved \(fileURL.lastPathComponent) to Trash", "Restore \(fileURL.lastPathComponent) from Trash", undo)
+        case .delete:
+            if dryRun {
+                return (fileURL, "Would permanently delete \(fileURL.lastPathComponent)", "No automatic undo for permanent delete", nil)
+            }
+            try fileManager.removeItem(at: fileURL)
+            return (fileURL, "Permanently deleted \(fileURL.lastPathComponent)", "No automatic undo for permanent delete", nil)
         case .shellScript:
             if dryRun {
                 return (fileURL, "Would run shell script for \(fileURL.lastPathComponent)", "No automatic undo for shell script in rule '\(ruleName)'", nil)
             }
             let process = Process()
             process.executableURL = URL(fileURLWithPath: "/bin/zsh")
-            process.arguments = ["-lc", action.value]
+            switch action.shellScriptSource {
+            case .inline:
+                process.arguments = ["-lc", action.value]
+            case .file:
+                let scriptPath = bookmarkManager.resolvePath(path: action.value, bookmarkData: action.bookmarkData)
+                process.arguments = [scriptPath]
+            }
+            process.currentDirectoryURL = shellScriptWorkingDirectory(for: action, fileURL: fileURL)
             process.environment = [
                 "OPEN_HAZEL_FILE_PATH": fileURL.path,
-                "OPEN_HAZEL_FILE_NAME": fileURL.lastPathComponent
+                "OPEN_HAZEL_FILE_NAME": fileURL.lastPathComponent,
+                "OPEN_HAZEL_WORKING_DIRECTORY": process.currentDirectoryURL?.path ?? fileURL.deletingLastPathComponent().path
             ]
             try process.run()
             process.waitUntilExit()
@@ -452,7 +466,7 @@ public final class FileRuleEngine: @unchecked Sendable {
             if dryRun {
                 return (targetURL, "Would sort \(fileURL.lastPathComponent) into \(directoryName)", "Move \(targetURL.lastPathComponent) back to \(fileURL.deletingLastPathComponent().path)", undo)
             }
-            guard targetURL != fileURL || action.conflictPolicy != .skip else {
+            if shouldSkipOperation(from: fileURL, to: targetURL, policy: action.conflictPolicy) {
                 return (fileURL, "Skipped sorting \(fileURL.lastPathComponent) because destination already exists", nil, nil)
             }
             if action.conflictPolicy == .replace, fileManager.fileExists(atPath: targetURL.path) {
@@ -480,7 +494,7 @@ public final class FileRuleEngine: @unchecked Sendable {
             if dryRun {
                 return (targetURL, "Would append date to \(fileURL.lastPathComponent)", "Rename \(targetURL.lastPathComponent) back to \(fileURL.lastPathComponent)", undo)
             }
-            guard targetURL != fileURL || action.conflictPolicy != .skip else {
+            if shouldSkipOperation(from: fileURL, to: targetURL, policy: action.conflictPolicy) {
                 return (fileURL, "Skipped appending date to \(fileURL.lastPathComponent) because target already exists", nil, nil)
             }
             if action.conflictPolicy == .replace, fileManager.fileExists(atPath: targetURL.path) {
@@ -546,8 +560,29 @@ public final class FileRuleEngine: @unchecked Sendable {
         case .replace:
             return url
         case .skip:
-            return fileManager.fileExists(atPath: url.path) ? url.deletingLastPathComponent().appendingPathComponent(url.lastPathComponent) : url
+            return url
         }
+    }
+
+    private func shouldSkipOperation(from sourceURL: URL, to targetURL: URL, policy: ConflictPolicy) -> Bool {
+        guard policy == .skip else { return false }
+        guard sourceURL.standardizedFileURL != targetURL.standardizedFileURL else { return true }
+        return fileManager.fileExists(atPath: targetURL.path)
+    }
+
+    private func shellScriptWorkingDirectory(for action: RuleAction, fileURL: URL) -> URL {
+        if action.useFileLocationAsWorkingDirectory {
+            return fileURL.deletingLastPathComponent()
+        }
+
+        let path = bookmarkManager.resolvePath(
+            path: action.shellScriptWorkingDirectoryPath,
+            bookmarkData: action.shellScriptWorkingDirectoryBookmarkData
+        )
+        if path.isEmpty {
+            return fileURL.deletingLastPathComponent()
+        }
+        return URL(fileURLWithPath: (path as NSString).expandingTildeInPath, isDirectory: true)
     }
 
     private func uniqueDestination(url: URL) -> URL {

@@ -81,4 +81,23 @@ final class ConfigurationStoreTests: XCTestCase {
 
         XCTAssertEqual(imported, config)
     }
+
+    func testActivityLogAppendsEntries() async throws {
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
+        let store = ConfigurationStore(baseURL: root)
+        let first = ActivityItem(kind: .info, message: "Monitoring started", filePath: "/tmp/inbox", ruleName: "Watch Inbox")
+        let second = ActivityItem(kind: .error, message: "Rule failed", filePath: "/tmp/inbox/file.txt")
+
+        try await store.appendActivityLog(first)
+        try await store.appendActivityLog(second)
+
+        let logContents = try await store.loadActivityLog()
+        let logURL = await store.currentActivityLogURL()
+
+        XCTAssertTrue(FileManager.default.fileExists(atPath: logURL.path))
+        XCTAssertTrue(logContents.contains("Monitoring started"))
+        XCTAssertTrue(logContents.contains("Rule failed"))
+        XCTAssertTrue(logContents.contains("[INFO]"))
+        XCTAssertTrue(logContents.contains("[ERROR]"))
+    }
 }

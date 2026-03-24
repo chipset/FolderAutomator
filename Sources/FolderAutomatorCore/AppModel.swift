@@ -3,13 +3,19 @@ import SwiftUI
 
 @MainActor
 public final class FolderAutomatorModel: ObservableObject {
-    @Published public var configuration: AppConfiguration = .default
+    @Published public var configuration: AppConfiguration = .default {
+        didSet {
+            refreshUnsavedChangesState()
+        }
+    }
     @Published public var activity: [ActivityItem] = []
     @Published public var isMonitoring = false
     @Published public var previewItems: [ActivityItem] = []
     @Published public var undoOperations: [UndoOperation] = []
     @Published public var folderSearchText = ""
     @Published public var activitySearchText = ""
+    @Published public private(set) var hasUnsavedChanges = false
+    @Published public private(set) var isSavingConfiguration = false
 
     private let store: ConfigurationStore
     private let engine: FileRuleEngine
@@ -20,6 +26,7 @@ public final class FolderAutomatorModel: ObservableObject {
     private var debounceTasks: [UUID: Task<Void, Never>] = [:]
     private var processedFiles: [String: ProcessedFileRecord] = [:]
     private let fileManager = FileManager.default
+    private var lastSavedConfiguration: AppConfiguration = .default
 
     public init(
         store: ConfigurationStore = .shared,
@@ -35,7 +42,10 @@ public final class FolderAutomatorModel: ObservableObject {
 
     public func load() async {
         do {
-            configuration = try await store.loadConfiguration()
+            let loadedConfiguration = try await store.loadConfiguration()
+            configuration = loadedConfiguration
+            lastSavedConfiguration = loadedConfiguration
+            hasUnsavedChanges = false
             activity = try await store.loadActivity()
             processedFiles = try await store.loadProcessedFiles()
             undoOperations = try await store.loadUndoOperations()
@@ -45,9 +55,18 @@ public final class FolderAutomatorModel: ObservableObject {
     }
 
     public func save() async {
+        guard hasUnsavedChanges || configuration.general.launchAtLogin != lastSavedConfiguration.general.launchAtLogin else {
+            return
+        }
+
+        isSavingConfiguration = true
+        defer { isSavingConfiguration = false }
+
         do {
             try await store.saveConfiguration(configuration)
             try await loginItemManager.sync(enabled: configuration.general.launchAtLogin)
+            lastSavedConfiguration = configuration
+            hasUnsavedChanges = false
         } catch {
             appendActivity(.init(kind: .error, message: "Failed to save configuration: \(error.localizedDescription)"))
         }
@@ -153,14 +172,42 @@ public final class FolderAutomatorModel: ObservableObject {
         guard
             let folderIndex = configuration.folders.firstIndex(where: { $0.id == folderID }),
             let ruleIndex = configuration.folders[folderIndex].rules.firstIndex(where: { $0.id == ruleID }),
-            let actionIndex = configuration.folders[folderIndex].rules[ruleIndex].actions.firstIndex(where: { $0.id == actionID }),
-            let path = PathPicker.chooseFolder(initialPath: configuration.folders[folderIndex].rules[ruleIndex].actions[actionIndex].value)
+            let actionIndex = configuration.folders[folderIndex].rules[ruleIndex].actions.firstIndex(where: { $0.id == actionID })
         else {
             return
         }
 
+        let action = configuration.folders[folderIndex].rules[ruleIndex].actions[actionIndex]
+        let path: String?
+        switch action.kind {
+        case .move, .copy:
+            path = PathPicker.chooseFolder(initialPath: action.value)
+        case .shellScript:
+            path = PathPicker.chooseFile(initialPath: action.value)
+        default:
+            path = PathPicker.chooseFolder(initialPath: action.value)
+        }
+
+        guard let path else { return }
+
         configuration.folders[folderIndex].rules[ruleIndex].actions[actionIndex].value = path
         configuration.folders[folderIndex].rules[ruleIndex].actions[actionIndex].bookmarkData = try? bookmarkManager.makeBookmark(for: path)
+    }
+
+    public func chooseActionWorkingDirectory(folderID: UUID, ruleID: UUID, actionID: UUID) {
+        guard
+            let folderIndex = configuration.folders.firstIndex(where: { $0.id == folderID }),
+            let ruleIndex = configuration.folders[folderIndex].rules.firstIndex(where: { $0.id == ruleID }),
+            let actionIndex = configuration.folders[folderIndex].rules[ruleIndex].actions.firstIndex(where: { $0.id == actionID }),
+            let path = PathPicker.chooseFolder(
+                initialPath: configuration.folders[folderIndex].rules[ruleIndex].actions[actionIndex].shellScriptWorkingDirectoryPath
+            )
+        else {
+            return
+        }
+
+        configuration.folders[folderIndex].rules[ruleIndex].actions[actionIndex].shellScriptWorkingDirectoryPath = path
+        configuration.folders[folderIndex].rules[ruleIndex].actions[actionIndex].shellScriptWorkingDirectoryBookmarkData = try? bookmarkManager.makeBookmark(for: path)
     }
 
     public func clearActivity() {
@@ -241,6 +288,10 @@ public final class FolderAutomatorModel: ObservableObject {
             (item.ruleName?.lowercased().contains(query) ?? false) ||
             (item.filePath?.lowercased().contains(query) ?? false)
         }
+    }
+
+    private func refreshUnsavedChangesState() {
+        hasUnsavedChanges = configuration != lastSavedConfiguration
     }
 
     public func preview(folderID: UUID, filePath: String) async {
@@ -348,6 +399,13 @@ public final class FolderAutomatorModel: ObservableObject {
         activity.insert(item, at: 0)
         if activity.count > configuration.general.maxActivityItems {
             activity = Array(activity.prefix(configuration.general.maxActivityItems))
+        }
+        Task {
+            do {
+                try await store.appendActivityLog(item)
+            } catch {
+                debugPrint("Failed to append activity log entry:", error.localizedDescription)
+            }
         }
     }
 
