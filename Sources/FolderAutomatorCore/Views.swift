@@ -399,7 +399,6 @@ struct RuleEditorView: View {
     @State private var draggedActionID: UUID?
     @State private var hoveredActionID: UUID?
     @State private var manualRunResults: [ActivityItem] = []
-    @State private var manualRunFilePath = ""
     @State private var showingManualRunResults = false
 
     var body: some View {
@@ -518,12 +517,6 @@ struct RuleEditorView: View {
                 VStack(alignment: .leading, spacing: 16) {
                     Text("Dry-run preview for a single rule.")
                         .foregroundStyle(.secondary)
-                    if manualRunFilePath.isEmpty == false {
-                        Text(manualRunFilePath)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                            .textSelection(.enabled)
-                    }
                     PreviewResultsView(items: manualRunResults)
                     HStack {
                         Spacer()
@@ -569,10 +562,8 @@ struct RuleEditorView: View {
     }
 
     private func runRuleManually() {
-        guard let path = PathPicker.chooseFile() else { return }
-        manualRunFilePath = path
         Task {
-            manualRunResults = await model.previewRule(folderID: folderID, ruleID: rule.id, filePath: path)
+            manualRunResults = await model.previewRule(folderID: folderID, ruleID: rule.id)
             showingManualRunResults = true
         }
     }

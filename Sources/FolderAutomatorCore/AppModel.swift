@@ -298,8 +298,38 @@ public final class FolderAutomatorModel: ObservableObject {
         previewItems = await previewActivityItems(folderID: folderID, ruleID: nil, filePath: filePath)
     }
 
-    public func previewRule(folderID: UUID, ruleID: UUID, filePath: String) async -> [ActivityItem] {
-        await previewActivityItems(folderID: folderID, ruleID: ruleID, filePath: filePath)
+    public func previewRule(folderID: UUID, ruleID: UUID) async -> [ActivityItem] {
+        guard let folder = configuration.folders.first(where: { $0.id == folderID }) else {
+            return [.init(kind: .error, message: "Unable to find the watched folder for this rule.")]
+        }
+
+        let resolvedPath = bookmarkManager.resolvePath(path: folder.path, bookmarkData: folder.bookmarkData)
+        let rootURL = URL(fileURLWithPath: resolvedPath)
+        let fileURLs = scanFiles(in: rootURL, recursive: folder.includeSubfolders)
+            .sorted(by: { $0.path < $1.path })
+
+        guard fileURLs.isEmpty == false else {
+            return [.init(kind: .info, message: "No files were found in \(rootURL.path) for this dry-run.", filePath: rootURL.path)]
+        }
+
+        var results: [ActivityItem] = []
+        for fileURL in fileURLs {
+            if configuration.general.ignoreHiddenFiles && fileURL.lastPathComponent.hasPrefix(".") {
+                continue
+            }
+
+            let items = await previewActivityItems(folderID: folderID, ruleID: ruleID, filePath: fileURL.path)
+            let meaningfulItems = items.filter { item in
+                item.kind != .info || item.message.contains("No rules would run") == false
+            }
+            if meaningfulItems.isEmpty == false {
+                results.append(contentsOf: meaningfulItems)
+            }
+        }
+
+        return results.isEmpty
+            ? [.init(kind: .info, message: "This rule would not run for any files in \(rootURL.path).", filePath: rootURL.path)]
+            : results
     }
 
     private func previewActivityItems(folderID: UUID, ruleID: UUID?, filePath: String) async -> [ActivityItem] {
